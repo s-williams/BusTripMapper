@@ -84,4 +84,13 @@ class BusTripMapperTest {
         assertEquals(0, trips.get(0).getChargeAmount());
     }
 
+    @Test
+    public void complex() {
+        BusTripMapper busTripMapper = new BusTripMapper("complex.csv");
+        List<Tap> taps = busTripMapper.readFile();
+        assertEquals(9, taps.size());
+
+        List<Trip> trips = busTripMapper.mapTrips();
+        assertEquals(5, trips.size());
+    }
 }
