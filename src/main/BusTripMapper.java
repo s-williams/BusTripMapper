@@ -3,6 +3,9 @@ package main;
 import main.model.Tap;
 import main.model.Trip;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
@@ -13,10 +16,10 @@ import java.util.stream.Collectors;
 
 public class BusTripMapper {
 
-    private String inputFileName;
+    private final String inputFileName;
 
-    private List<Tap> taps;
-    private List<Trip> trips;
+    private final List<Tap> taps;
+    private final List<Trip> trips;
 
     public BusTripMapper(String inputFileName) {
         this.inputFileName = inputFileName;
@@ -24,53 +27,84 @@ public class BusTripMapper {
         this.trips = new ArrayList<>();
     }
 
+    /**
+     * @return
+     */
     public List<Tap> readFile() {
         // Read the csv and map to tap objects
         try {
-            Files.lines(Path.of(inputFileName))
+            Files.lines(Path.of("resources/" + inputFileName))
                     .skip(1) // Ignore first line
-                    .forEach(l -> {
-                        taps.add(createTap(l));
-                    });
+                    .forEach(l -> taps.add(createTap(l)));
         } catch (Exception e) {
             e.printStackTrace();
         }
         return taps;
     }
 
-    public void mapTrips() {
-        for (int i = 0; i < taps.size(); i++) {
-            Tap firstStop = taps.get(i);
-            Tap secondStop = null;
-            if (firstStop.getTapType().equals("ON")) {
-                // Get the next off tap with same pan
-                List<Tap> samePan = taps.stream()
-                        .filter(t -> t.getPan().equals(firstStop.getPan()))
-                        .filter(t -> t.getDateTime().after(firstStop.getDateTime()))
-                        .filter(t -> t.getTapType().equals("OFF"))
-                        .collect(Collectors.toList());
-                secondStop = samePan.get(0);
+    /**
+     * @return
+     */
+    public List<Trip> mapTrips() {
+        taps.stream().filter(t -> t.getTapType().equals("ON")).forEach(firstStop -> {
+            Tap secondStop;
 
-                Trip trip = new Trip();
+            // Get the next off tap with same pan
+            List<Tap> samePan = taps.stream()
+                    .filter(t -> t.getPan().equals(firstStop.getPan()))
+                    .filter(t -> t.getCompanyId().equals(firstStop.getCompanyId()))
+                    .filter(t -> t.getBusId().equals(firstStop.getBusId()))
+                    .filter(t -> t.getDateTime().after(firstStop.getDateTime()))
+                    .filter(t -> t.getTapType().equals("OFF"))
+                    .collect(Collectors.toList());
+            secondStop = samePan.get(0);
 
-                // calculate charge and status
-                if (secondStop == null) {
-
+            Trip trip = new Trip();
+            trip.setStarted(firstStop.getDateTime());
+            if (secondStop != null) {
+                trip.setFinished(secondStop.getDateTime());
+                trip.setToStopId(secondStop.getStopId());
+                if (firstStop.getStopId().equals(secondStop.getStopId())) {
+                    // Stops are the same, therefore cancelled trip
+                    trip.setStatus("INCOMPLETE");
+                } else {
+                    trip.setStatus("COMPLETE");
                 }
+
+            } else {
+                trip.setFinished(null);
+                trip.setToStopId(null);
+                trip.setStatus("INCOMPLETE");
             }
-        }
-        taps.forEach(t -> {
-            // For each tap, find a pair tap, then make a trip
+            trip.setFromStopId(firstStop.getStopId());
+            trip.setCompanyId(firstStop.getCompanyId());
+            trip.setBusId(firstStop.getBusId());
+            trip.setPan(firstStop.getPan());
+            trip.setChargeAmount(Utility.calculateCharge(trip.getFromStopId(), trip.getToStopId()));
 
-
-            // If the pair is a tap on/tap off at the same stop, no charge
-
-            // If a tap has no pair, and is a tap on, calculate the biggest fare and make that a trip
+            trips.add(trip);
         });
+        writeFile();
+        return trips;
+    }
+
+    private void writeFile() {
+        File csvOutput = new File("out/" + inputFileName);
+        csvOutput.delete();
+        try {
+            PrintWriter pw = new PrintWriter(csvOutput);
+            pw.println("Started, Finished, DurationSecs, FromStopId, ToStopId, ChargeAmount, CompanyId, BusID, PAN, Status");
+            trips.stream().forEach(trip -> pw.println(trip.toCsv()));
+            pw.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
      * Creates a tap from a line of csv
+     *
      * @param line
      * @return
      */

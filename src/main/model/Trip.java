@@ -6,7 +6,6 @@ import java.util.Date;
  * Bean containing all data relevant to a record of a trip on a bus.
  */
 public class Trip {
-    private String id;
     private Date started;
     private Date finished;
     private String fromStopId;
@@ -20,12 +19,31 @@ public class Trip {
     public Trip() {
     }
 
-    public String getId() {
-        return id;
+    public String toCsv() {
+        return started + ", " +
+                finished + ", " +
+                fromStopId + ", " +
+                toStopId + ", " +
+                chargeAmount + ", " +
+                companyId + ", " +
+                busId + ", " +
+                pan + ", " +
+                status;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    @Override
+    public String toString() {
+        return "Trip{" +
+                "started=" + started +
+                ", finished=" + finished +
+                ", fromStopId='" + fromStopId + '\'' +
+                ", toStopId='" + toStopId + '\'' +
+                ", chargeAmount=" + chargeAmount +
+                ", companyId='" + companyId + '\'' +
+                ", busId='" + busId + '\'' +
+                ", pan='" + pan + '\'' +
+                ", status='" + status + '\'' +
+                '}';
     }
 
     public Date getStarted() {

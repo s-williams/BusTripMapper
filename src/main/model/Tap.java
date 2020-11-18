@@ -1,12 +1,11 @@
 package main.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Bean containing all data relevant to a record of a tap on/off a bus.
  */
-public class Tap implements Serializable {
+public class Tap {
     private String id;
     private Date dateTime;
     private String tapType;
