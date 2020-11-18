@@ -72,4 +72,16 @@ class BusTripMapperTest {
         assertFalse(trips.get(0).getPan().equals(trips.get(1).getPan()));
     }
 
+    @Test
+    public void oneTripCancelled() {
+        BusTripMapper busTripMapper = new BusTripMapper("one_trip_cancelled.csv");
+        List<Tap> taps = busTripMapper.readFile();
+        assertEquals(2, taps.size());
+
+        List<Trip> trips = busTripMapper.mapTrips();
+        assertEquals(1, trips.size());
+        assertEquals("CANCELLED", trips.get(0).getStatus());
+        assertEquals(0, trips.get(0).getChargeAmount());
+    }
+
 }

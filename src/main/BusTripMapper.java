@@ -70,7 +70,7 @@ public class BusTripMapper {
                 trip.setToStopId(secondStop.getStopId());
                 if (firstStop.getStopId().equals(secondStop.getStopId())) {
                     // Stops are the same, therefore cancelled trip
-                    trip.setStatus("INCOMPLETE");
+                    trip.setStatus("CANCELLED");
                 } else {
                     trip.setStatus("COMPLETE");
                 }
