@@ -57,7 +57,11 @@ public class BusTripMapper {
                     .filter(t -> t.getDateTime().after(firstStop.getDateTime()))
                     .filter(t -> t.getTapType().equals("OFF"))
                     .collect(Collectors.toList());
-            secondStop = samePan.get(0);
+            if (samePan.size() > 0) {
+                secondStop = samePan.get(0);
+            } else {
+                secondStop = null;
+            }
 
             Trip trip = new Trip();
             trip.setStarted(firstStop.getDateTime());

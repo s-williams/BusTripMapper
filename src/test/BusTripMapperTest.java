@@ -59,4 +59,17 @@ class BusTripMapperTest {
         assertFalse(trips.get(0).getPan().equals(trips.get(1).getPan()));
     }
 
+    @Test
+    public void twoTripsTwoCustomersOneIncomplete() {
+        BusTripMapper busTripMapper = new BusTripMapper("two_trips_two_customers_one_incomplete.csv");
+        List<Tap> taps = busTripMapper.readFile();
+        assertEquals(3, taps.size());
+
+        List<Trip> trips = busTripMapper.mapTrips();
+        assertEquals(2, trips.size());
+        assertEquals("INCOMPLETE", trips.get(0).getStatus());
+        assertEquals("COMPLETE", trips.get(1).getStatus());
+        assertFalse(trips.get(0).getPan().equals(trips.get(1).getPan()));
+    }
+
 }
