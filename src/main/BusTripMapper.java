@@ -28,7 +28,8 @@ public class BusTripMapper {
     }
 
     /**
-     * @return
+     * Read the CSV file and map the contents of the file to a list credit card payment tap objects.
+     * @return the list of credit card payment taps
      */
     public List<Tap> readFile() {
         // Read the csv and map to tap objects
@@ -43,7 +44,8 @@ public class BusTripMapper {
     }
 
     /**
-     * @return
+     * Map the credit card payment taps to a list of bus trips.
+     * @return the list of bus trips
      */
     public List<Trip> mapTrips() {
         taps.stream().filter(t -> t.getTapType().equals("ON")).forEach(firstStop -> {
@@ -92,13 +94,16 @@ public class BusTripMapper {
         return trips;
     }
 
+    /**
+     * Write the list of trips to a CSV file.
+     */
     private void writeFile() {
         File csvOutput = new File("out/" + inputFileName);
         csvOutput.delete();
         try {
             PrintWriter pw = new PrintWriter(csvOutput);
             pw.println("Started, Finished, DurationSecs, FromStopId, ToStopId, ChargeAmount, CompanyId, BusID, PAN, Status");
-            trips.stream().forEach(trip -> pw.println(trip.toCsv()));
+            trips.forEach(trip -> pw.println(trip.toCsv()));
             pw.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -107,12 +112,12 @@ public class BusTripMapper {
     }
 
     /**
-     * Creates a tap from a line of csv
+     * Creates a tap object from a String containing a line of csv
      *
-     * @param line
-     * @return
+     * @param line CSV
+     * @return tap object instance
      */
-    public Tap createTap(String line) {
+    private Tap createTap(String line) {
         String[] csv = line.split(",");
         Tap tap = new Tap();
         tap.setId(csv[0].trim());
