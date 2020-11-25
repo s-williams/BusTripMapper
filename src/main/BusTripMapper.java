@@ -32,7 +32,6 @@ public class BusTripMapper {
      * @return the list of credit card payment taps
      */
     public List<Tap> readFile() {
-        // Read the csv and map to tap objects
         try {
             Files.lines(Path.of("resources/" + inputFileName))
                     .skip(1) // Ignore first line
