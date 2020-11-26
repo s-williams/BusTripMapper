@@ -1,5 +1,6 @@
 package test;
 
+import main.BusTripCsvHandler;
 import main.BusTripMapper;
 import main.model.Tap;
 import main.model.Trip;
@@ -13,21 +14,23 @@ class BusTripMapperTest {
 
     @Test
     public void noTripsCsvReturnsNoTrips() {
-        BusTripMapper busTripMapper = new BusTripMapper("empty.csv");
-        List<Tap> taps = busTripMapper.readFile();
+        BusTripCsvHandler busTripCsvHandler = new BusTripCsvHandler();
+        List<Tap> taps = busTripCsvHandler.readFile("empty.csv");
         assertEquals(0, taps.size());
 
-        List<Trip> trips = busTripMapper.mapTrips();
+        BusTripMapper busTripMapper = new BusTripMapper();
+        List<Trip> trips = busTripMapper.mapTrips(taps);
         assertEquals(0, trips.size());
     }
 
     @Test
     public void oneTripCsvReturnsOneTrip() {
-        BusTripMapper busTripMapper = new BusTripMapper("one_trip.csv");
-        List<Tap> taps = busTripMapper.readFile();
+        BusTripCsvHandler busTripCsvHandler = new BusTripCsvHandler();
+        List<Tap> taps = busTripCsvHandler.readFile("one_trip.csv");
         assertEquals(2, taps.size());
 
-        List<Trip> trips = busTripMapper.mapTrips();
+        BusTripMapper busTripMapper = new BusTripMapper();
+        List<Trip> trips = busTripMapper.mapTrips(taps);
         assertEquals(1, trips.size());
         assertEquals("COMPLETE", trips.get(0).getStatus());
         assertEquals(325, trips.get(0).getChargeAmount());
@@ -35,11 +38,12 @@ class BusTripMapperTest {
 
     @Test
     public void twoTripsOneCustomerCsvReturnsTwoTrips() {
-        BusTripMapper busTripMapper = new BusTripMapper("two_trips_one_customer.csv");
-        List<Tap> taps = busTripMapper.readFile();
+        BusTripCsvHandler busTripCsvHandler = new BusTripCsvHandler();
+        List<Tap> taps = busTripCsvHandler.readFile("two_trips_one_customer.csv");
         assertEquals(4, taps.size());
 
-        List<Trip> trips = busTripMapper.mapTrips();
+        BusTripMapper busTripMapper = new BusTripMapper();
+        List<Trip> trips = busTripMapper.mapTrips(taps);
         assertEquals(2, trips.size());
         assertEquals("COMPLETE", trips.get(0).getStatus());
         assertEquals("COMPLETE", trips.get(1).getStatus());
@@ -48,11 +52,12 @@ class BusTripMapperTest {
 
     @Test
     public void twoTripsTwoCustomersReturnsTwoTrips() {
-        BusTripMapper busTripMapper = new BusTripMapper("two_trips_two_customers.csv");
-        List<Tap> taps = busTripMapper.readFile();
+        BusTripCsvHandler busTripCsvHandler = new BusTripCsvHandler();
+        List<Tap> taps = busTripCsvHandler.readFile("two_trips_two_customers.csv");
         assertEquals(4, taps.size());
 
-        List<Trip> trips = busTripMapper.mapTrips();
+        BusTripMapper busTripMapper = new BusTripMapper();
+        List<Trip> trips = busTripMapper.mapTrips(taps);
         assertEquals(2, trips.size());
         assertEquals("COMPLETE", trips.get(0).getStatus());
         assertEquals("COMPLETE", trips.get(1).getStatus());
@@ -61,11 +66,12 @@ class BusTripMapperTest {
 
     @Test
     public void twoTripsTwoCustomersOneIncompleteCsvReturnsTwoTripsOneIncomplete() {
-        BusTripMapper busTripMapper = new BusTripMapper("two_trips_two_customers_one_incomplete.csv");
-        List<Tap> taps = busTripMapper.readFile();
+        BusTripCsvHandler busTripCsvHandler = new BusTripCsvHandler();
+        List<Tap> taps = busTripCsvHandler.readFile("two_trips_two_customers_one_incomplete.csv");
         assertEquals(3, taps.size());
 
-        List<Trip> trips = busTripMapper.mapTrips();
+        BusTripMapper busTripMapper = new BusTripMapper();
+        List<Trip> trips = busTripMapper.mapTrips(taps);
         assertEquals(2, trips.size());
         assertEquals("INCOMPLETE", trips.get(0).getStatus());
         assertEquals("COMPLETE", trips.get(1).getStatus());
@@ -74,11 +80,12 @@ class BusTripMapperTest {
 
     @Test
     public void oneTripCancelledCsvReturnsOneCancelledTrip() {
-        BusTripMapper busTripMapper = new BusTripMapper("one_trip_cancelled.csv");
-        List<Tap> taps = busTripMapper.readFile();
+        BusTripCsvHandler busTripCsvHandler = new BusTripCsvHandler();
+        List<Tap> taps = busTripCsvHandler.readFile("one_trip_cancelled.csv");
         assertEquals(2, taps.size());
 
-        List<Trip> trips = busTripMapper.mapTrips();
+        BusTripMapper busTripMapper = new BusTripMapper();
+        List<Trip> trips = busTripMapper.mapTrips(taps);
         assertEquals(1, trips.size());
         assertEquals("CANCELLED", trips.get(0).getStatus());
         assertEquals(0, trips.get(0).getChargeAmount());
@@ -86,11 +93,12 @@ class BusTripMapperTest {
 
     @Test
     public void complexCsvReturnsCorrectNumberOfTrips() {
-        BusTripMapper busTripMapper = new BusTripMapper("complex.csv");
-        List<Tap> taps = busTripMapper.readFile();
+        BusTripCsvHandler busTripCsvHandler = new BusTripCsvHandler();
+        List<Tap> taps = busTripCsvHandler.readFile("complex.csv");
         assertEquals(9, taps.size());
 
-        List<Trip> trips = busTripMapper.mapTrips();
+        BusTripMapper busTripMapper = new BusTripMapper();
+        List<Trip> trips = busTripMapper.mapTrips(taps);
         assertEquals(5, trips.size());
     }
 }

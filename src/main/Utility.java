@@ -1,5 +1,10 @@
 package main;
 
+import main.model.Tap;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 public class Utility {
 
     /**
@@ -34,5 +39,29 @@ public class Utility {
         //unreachable
         System.err.println("Cannot");
         return 0;
+    }
+
+    /**
+     * Creates a tap object from a String containing a line of csv
+     *
+     * @param line CSV
+     * @return tap object instance
+     */
+    public static Tap createTap(String line) {
+        String[] csv = line.split(",");
+        Tap tap = new Tap();
+        tap.setId(csv[0].trim());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        try {
+            tap.setDateTime(sdf.parse(csv[1].trim()));
+        } catch (ParseException e) {
+            System.err.println("Unable to parse date " + csv[1].trim());
+        }
+        tap.setTapType(csv[2].trim());
+        tap.setStopId(csv[3].trim());
+        tap.setCompanyId(csv[4].trim());
+        tap.setBusId(csv[5].trim());
+        tap.setPan(csv[6].trim());
+        return tap;
     }
 }

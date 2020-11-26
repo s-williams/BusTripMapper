@@ -16,37 +16,19 @@ import java.util.stream.Collectors;
 
 public class BusTripMapper {
 
-    private final String inputFileName;
-
     private final List<Tap> taps;
     private final List<Trip> trips;
 
-    public BusTripMapper(String inputFileName) {
-        this.inputFileName = inputFileName;
+    public BusTripMapper() {
         this.taps = new ArrayList<>();
         this.trips = new ArrayList<>();
-    }
-
-    /**
-     * Read the CSV file and map the contents of the file to a list credit card payment tap objects.
-     * @return the list of credit card payment taps
-     */
-    public List<Tap> readFile() {
-        try {
-            Files.lines(Path.of("resources/" + inputFileName))
-                    .skip(1) // Ignore first line
-                    .forEach(l -> taps.add(createTap(l)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return taps;
     }
 
     /**
      * Map the credit card payment taps to a list of bus trips.
      * @return the list of bus trips
      */
-    public List<Trip> mapTrips() {
+    public List<Trip> mapTrips(List<Tap> taps) {
         taps.stream().filter(t -> t.getTapType().equals("ON")).forEach(firstStop -> {
             Tap secondStop;
 
@@ -70,7 +52,6 @@ public class BusTripMapper {
                 trip.setFinished(secondStop.getDateTime());
                 trip.setToStopId(secondStop.getStopId());
                 if (firstStop.getStopId().equals(secondStop.getStopId())) {
-                    // Stops are the same, therefore cancelled trip
                     trip.setStatus("CANCELLED");
                 } else {
                     trip.setStatus("COMPLETE");
@@ -89,48 +70,6 @@ public class BusTripMapper {
 
             trips.add(trip);
         });
-        writeFile();
         return trips;
-    }
-
-    /**
-     * Write the list of trips to a CSV file.
-     */
-    private void writeFile() {
-        File csvOutput = new File("out/" + inputFileName);
-        csvOutput.delete();
-        try {
-            PrintWriter pw = new PrintWriter(csvOutput);
-            pw.println("Started, Finished, DurationSecs, FromStopId, ToStopId, ChargeAmount, CompanyId, BusID, PAN, Status");
-            trips.forEach(trip -> pw.println(trip.toCsv()));
-            pw.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * Creates a tap object from a String containing a line of csv
-     *
-     * @param line CSV
-     * @return tap object instance
-     */
-    private Tap createTap(String line) {
-        String[] csv = line.split(",");
-        Tap tap = new Tap();
-        tap.setId(csv[0].trim());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        try {
-            tap.setDateTime(sdf.parse(csv[1].trim()));
-        } catch (ParseException e) {
-            System.err.println("Unable to parse date " + csv[1].trim());
-        }
-        tap.setTapType(csv[2].trim());
-        tap.setStopId(csv[3].trim());
-        tap.setCompanyId(csv[4].trim());
-        tap.setBusId(csv[5].trim());
-        tap.setPan(csv[6].trim());
-        return tap;
     }
 }
