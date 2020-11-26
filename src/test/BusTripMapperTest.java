@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BusTripMapperTest {
 
     @Test
-    public void noTrips() {
+    public void noTripsCsvReturnsNoTrips() {
         BusTripMapper busTripMapper = new BusTripMapper("empty.csv");
         List<Tap> taps = busTripMapper.readFile();
         assertEquals(0, taps.size());
@@ -22,7 +22,7 @@ class BusTripMapperTest {
     }
 
     @Test
-    public void oneTrip() {
+    public void oneTripCsvReturnsOneTrip() {
         BusTripMapper busTripMapper = new BusTripMapper("one_trip.csv");
         List<Tap> taps = busTripMapper.readFile();
         assertEquals(2, taps.size());
@@ -34,7 +34,7 @@ class BusTripMapperTest {
     }
 
     @Test
-    public void twoTripsOneCustomer() {
+    public void twoTripsOneCustomerCsvReturnsTwoTrips() {
         BusTripMapper busTripMapper = new BusTripMapper("two_trips_one_customer.csv");
         List<Tap> taps = busTripMapper.readFile();
         assertEquals(4, taps.size());
@@ -47,7 +47,7 @@ class BusTripMapperTest {
     }
 
     @Test
-    public void twoTripsTwoCustomers() {
+    public void twoTripsTwoCustomersReturnsTwoTrips() {
         BusTripMapper busTripMapper = new BusTripMapper("two_trips_two_customers.csv");
         List<Tap> taps = busTripMapper.readFile();
         assertEquals(4, taps.size());
@@ -60,7 +60,7 @@ class BusTripMapperTest {
     }
 
     @Test
-    public void twoTripsTwoCustomersOneIncomplete() {
+    public void twoTripsTwoCustomersOneIncompleteCsvReturnsTwoTripsOneIncomplete() {
         BusTripMapper busTripMapper = new BusTripMapper("two_trips_two_customers_one_incomplete.csv");
         List<Tap> taps = busTripMapper.readFile();
         assertEquals(3, taps.size());
@@ -73,7 +73,7 @@ class BusTripMapperTest {
     }
 
     @Test
-    public void oneTripCancelled() {
+    public void oneTripCancelledCsvReturnsOneCancelledTrip() {
         BusTripMapper busTripMapper = new BusTripMapper("one_trip_cancelled.csv");
         List<Tap> taps = busTripMapper.readFile();
         assertEquals(2, taps.size());
@@ -85,7 +85,7 @@ class BusTripMapperTest {
     }
 
     @Test
-    public void complex() {
+    public void complexCsvReturnsCorrectNumberOfTrips() {
         BusTripMapper busTripMapper = new BusTripMapper("complex.csv");
         List<Tap> taps = busTripMapper.readFile();
         assertEquals(9, taps.size());
